@@ -25,6 +25,38 @@
 		return input;
 	}
 
+	const getCheckedInputs = () => {
+		return document.querySelectorAll('.emby-checkbox-label input:checked');
+	}
+
+	const createSelectedTagsString = () => {
+		const checkedInputs = getCheckedInputs();
+		if(document.getElementById('selectedTagsContainer')) {
+			document.getElementById('selectedTagsContainer').remove();
+		}
+		if(checkedInputs.length === 0) return '';
+
+		const filterOptions = document.querySelector('.tagFilters .filterOptions .checkboxList');
+
+		const selectedTagsContainer = document.createElement('div');
+		selectedTagsContainer.id = 'selectedTagsContainer';
+
+		const buttonContainer = document.createElement('div');
+		buttonContainer.classList.add('selected-tags');
+
+		checkedInputs.forEach(input => {
+			const button = document.createElement('button');
+			button.textContent = input.nextElementSibling.textContent.trim();
+			button.addEventListener('click', () => {
+				button.remove();
+				input.click();
+			})
+			selectedTagsContainer.appendChild(button);
+		})
+
+		filterOptions.prepend(selectedTagsContainer);
+	}
+
 	const init = () => {
 		const input = addInput();
 
@@ -36,8 +68,10 @@
 				label.style.display = tagText.includes(filter) ? '' : 'none';
 			});
 		});
+
+		createSelectedTagsString();
 	}
-	
+
 	document.addEventListener('click', function(event) {
 		if (event.target && event.target.closest('.tagFilters')) {
 			init();
