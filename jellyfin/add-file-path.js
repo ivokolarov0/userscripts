@@ -40,20 +40,33 @@
 			const filePathContainer = document.querySelector('#file-path-container');
 			if(filePathContainer) return;
 			const video = await fetchVideo();
-			
+
 			if(filePathContainer || !video.Path) return;
-			
+
+			// Create the file path container
 			document.querySelector('.detailPageContent').insertAdjacentHTML('afterbegin', `
 				<div style="margin: 0 0 10px;" id="file-path-container">
 					<h4>File Path:</h4>
-					<input
-						style="width:100%; border-color: #fff; background-color: #000; padding: 8px; color: #fff;"
-						type="text"
-						value="${video.Path}"
-						readonly
-					/>
+					<div style="display: flex; gap: 10px;align-items: center;">
+						<input
+							style="width:100%; border-color: #fff; background-color: #000; padding: 8px; color: #fff;"
+							type="text"
+							value="${video.Path}"
+							readonly
+						/>
+						<button type="button" onclick="copyToClipboard('${video.Path.replace(/\\/g, '\\\\')}')">Copy</button>
+					</div>
 				</div>
 			`);
+
+			// Copy to clipboard function
+			window.copyToClipboard = (text) => {
+				navigator.clipboard.writeText(text).then(() => {
+					alert('File path copied to clipboard!');
+				}).catch(err => {
+					console.error('Could not copy text: ', err);
+				});
+			};
 		};
 
 		const targetNode = document.body;
